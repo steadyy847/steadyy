@@ -32,4 +32,4 @@
 
 //            return yearDiff + 'Y ' + monthDiff + 'M ' + dayDiff + 'D';
             return yearDiff + (monthDiff/12) + (dayDiff/365);
-        }
+        } 
