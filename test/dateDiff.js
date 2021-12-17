@@ -31,6 +31,7 @@
             }
 
 //            return yearDiff + 'Y ' + monthDiff + 'M ' + dayDiff + 'D';
+                alert("Inside the DateDiff function");
             return yearDiff + (monthDiff/12) + (dayDiff/365);
         }
 
