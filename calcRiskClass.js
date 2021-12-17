@@ -6,7 +6,7 @@
 //                weight = document.getElementById("weight").value,
 //                tobacco_selected = $("input[name='Tobacco']:checked").val(),
 //                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
-//                $height_feet = $form.find('input[id="height_feet"]'),
+                $height_feet = $form.find('input[id="height_feet"]'),
 //                $height_inches = $form.find('input[id="height_inches"]'),
                 risk_class;
               alert("In the calcRiskClass function");
