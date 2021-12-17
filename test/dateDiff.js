@@ -36,12 +36,13 @@
 
         function calcRiskClass() {
             var storage = window.localStorage,
-                height_feet = document.getElementById("height_feet").value,
-                height_inches = document.getElementById("height_inches").value,
-                height_total_inches = (height_feet*12)+height_inches,
-                weight = document.getElementById("weight").value,
-                tobacco_selected = $("input[name='Tobacco']:checked").val(),
-                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
+//                height_feet = document.getElementById("height_feet").value,
+//                height_inches = document.getElementById("height_inches").value,
+//                height_total_inches = (height_feet*12)+height_inches,
+//                weight = document.getElementById("weight").value,
+//                tobacco_selected = $("input[name='Tobacco']:checked").val(),
+//                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
+                bmi,
                 risk_class;
 
             alert("BMI="+bmi);
