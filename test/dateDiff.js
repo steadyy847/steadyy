@@ -43,10 +43,10 @@
 //                weight = document.getElementById("weight").value,
 //                tobacco_selected = $("input[name='Tobacco']:checked").val(),
 //                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
-                var bmi,
-                risk_class;
+//                risk_class;
 
-            alert("BMI="+bmi);
+//            alert("BMI="+bmi);
+              alert("In the calcRiskClass function");
 
 //            if (tobacco_selected = false) {
 //                risk_class = 'nt4';
