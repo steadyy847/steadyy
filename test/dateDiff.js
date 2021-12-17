@@ -43,7 +43,7 @@
 //                weight = document.getElementById("weight").value,
 //                tobacco_selected = $("input[name='Tobacco']:checked").val(),
 //                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
-                bmi,
+                var bmi,
                 risk_class;
 
             alert("BMI="+bmi);
