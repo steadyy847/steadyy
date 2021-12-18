@@ -1,4 +1,4 @@
-function calcRiskClass(smoker, height_ft, height_in, weight) {
+function calcRiskClass_(smoker, height_ft, height_in, weight) {
     var height_total_inches = Number(height_ft * 12) + Number(height_in),
         bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
         risk_class;
