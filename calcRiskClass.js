@@ -1,7 +1,7 @@
         function calcRiskClass() {
 //            var storage = window.localStorage,
-               var weight,
-                   $weight = $form.find('input[id="weight"]');
+               var weight;
+//                   $weight = $form.find('input[id="weight"]');
 
 //                height_feet = document.getElementById("height_feet").value;
 //                height_inches = document.getElementById("height_inches").value,
@@ -14,8 +14,8 @@
 //                risk_class;
                    
               alert("In the calcRiskClass function");
-//                weight = document.getElementById("weight").value;
-               weight = $weight.val();
+                weight = document.getElementById("weight").value;
+//               weight = $weight.val();
                alert("Weight = "+weight);
             alert("BMI="+bmi);
 
