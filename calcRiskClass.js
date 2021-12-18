@@ -25,4 +25,4 @@ function calcRiskClass(smoker, height_ft, height_in, weight) {
         bmi,
         risk_class
     };
-}
+} 
