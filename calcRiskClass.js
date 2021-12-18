@@ -1,8 +1,6 @@
-        function calcRiskClass() {
+        function calcRiskClass(smoker, height_ft, height_in, weight) {
 //            var storage = window.localStorage,
-               var weight;
-//                   $weight = $form.find('input[id="weight"]');
-
+//               var weight;
 //                height_feet = document.getElementById("height_feet").value;
 //                height_inches = document.getElementById("height_inches").value,
 //                height_total_inches = (height_feet*12)+height_inches,
@@ -14,10 +12,10 @@
 //                risk_class;
                    
               alert("In the calcRiskClass function");
-                weight = document.getElementById("weight").value;
+//                weight = document.getElementById("weight").value;
 //               weight = $weight.val();
                alert("Weight = "+weight);
-            alert("BMI="+bmi);
+//            alert("BMI="+bmi);
 
 //            if (tobacco_selected = false) {
 //                risk_class = 'nt4';
