@@ -1,19 +1,23 @@
         function calcRiskClass() {
 //            var storage = window.localStorage,
-               var height_feet,
+               var weight,
+                   $weight = $form.find('input[id="weight"]');
+
+//                height_feet = document.getElementById("height_feet").value;
 //                height_inches = document.getElementById("height_inches").value,
 //                height_total_inches = (height_feet*12)+height_inches,
 //                weight = document.getElementById("weight").value,
 //                tobacco_selected = $("input[name='Tobacco']:checked").val(),
 //                bmi = Math.round(((weight/height_total_inches)/height_total_inches)*703),
-                $height_feet = $form.find('input[id="height_feet"]'),
+//                $height_feet = $form.find('input[id="height_feet"]'),
 //                $height_inches = $form.find('input[id="height_inches"]'),
-                risk_class;
+//                risk_class;
+                   
               alert("In the calcRiskClass function");
-//               height_feet = document.getElementById("height_feet").value;
-               height_feet = $height_feet.val();
-                alert("Height Feet = "+height_feet);
-//            alert("BMI="+bmi);
+//                weight = document.getElementById("weight").value;
+               weight = $weight.val();
+               alert("Weight = "+weight);
+            alert("BMI="+bmi);
 
 //            if (tobacco_selected = false) {
 //                risk_class = 'nt4';
