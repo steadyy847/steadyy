@@ -4,19 +4,19 @@ function calcRisk(smoker, height_ft, height_in, weight) {
         risk_class;
     if (smoker == 'No') {
         risk_class = 'nt4';
-        if (bmi<34) { 
+        if (bmi<=33 && bmi>=18) { 
             risk_class = 'nt3';
         }
-        if (bmi<32) { 
+        if (bmi<=31 && bmi>=18) { 
             risk_class = 'nt2';
         }
-        if (bmi<30) { 
+        if (bmi<=29 && bmi>=18) { 
             risk_class = 'nt1';
         }
     } else {
         if (smoker == 'Yes') {
             risk_class = 'smoke2';
-            if (bmi<32) { 
+            if (bmi<=31 && bmi>=18) { 
                 risk_class = 'smoke1';
             }
         }
