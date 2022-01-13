@@ -30,10 +30,10 @@ function getRedirectURL(currentPage) {
 				return "/life-quote-health-diabetes";
 			}
 			if (currentPage < 7 && heart_attack) {
-				return "/life-quote-health-heart_attack";
+				return "/life-quote-health-heart-attack";
 			}
 			if (currentPage < 8 && sleep_apnea) {
-				return "/life-quote-health-sleep_apnea";
+				return "/life-quote-health-sleep-apnea";
 			}
 			if (currentPage < 9 && stroke) {
 				return "/life-quote-health-stroke";
