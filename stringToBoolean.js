@@ -4,12 +4,14 @@ function stringToBoolean(string) {
         case "yes": 
         case "1": 
           return true;
-
+          break;
+            
         case "false": 
         case "no": 
         case "0": 
         case null: 
           return false;
+          break;
 
         default: 
           return Boolean(string);
