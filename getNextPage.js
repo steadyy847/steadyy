@@ -61,5 +61,6 @@ var storage = window.localStorage,
         }
       }
 		} else {
-      reeturn "";
+      return "";
     }
+}
