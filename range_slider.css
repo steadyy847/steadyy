@@ -1,0 +1,35 @@
+input[type='range'] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 12px;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+}
+
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #D44513;
+  cursor: pointer;
+}
+
+input[type='range']:hover {
+  outline: none;
+}
+input[type='range']:hover::-webkit-slider-thumb {
+  outline: 20px solid #D3E9F399;
+  -webkit-transition: .2s;
+  transition: opacity .2s;
+  transition-timing-function: ease-in .2s;
+}
+input[type='range']:hover::-moz-range-thumb {
+  outline: 20px solid #D3E9F399;
+}
+input[type='range']:hover::-ms-thumb {
+  outline: 20px solid #D3E9F399;
+}
