@@ -1,4 +1,4 @@
-function chkErrors(objectAffected, focusState, object) {
+function chkErrors(objectAffected, focusState, object, $form) {
 	console.log("objectAffected="+objectAffected+"\nfocusState="+focusState);
 	if (focusState == 'focusin') {
 		$("."+objectAffected+"_error").hide(500);
