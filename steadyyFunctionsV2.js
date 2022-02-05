@@ -1,4 +1,5 @@
-function chkErrors(objectAffected, focusState, object, dob_month, dob_day, dob_year) {
+function chkErrors(objectAffected, focusState, object) {
+	console.log("objectAffected="+objectAffected+"\nfocusState="+focusState);
 	if (focusState == 'focusin') {
 		$("."+objectAffected+"_error").hide(500);
 		return false;
