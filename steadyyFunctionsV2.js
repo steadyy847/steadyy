@@ -142,7 +142,7 @@ function getRedirectURL(currentPage) {
 				    	return "/quote-results/m5059";
 			    }
           else if (age >= 60) {
-              return "/quote-results-m6080";
+              return "/quote-results/m6080";
           }
 		    }
 		    else if (gender == 'female') {
@@ -159,7 +159,7 @@ function getRedirectURL(currentPage) {
 				    	return "/quote-results/f5059";
 			    }
           else if (age >= 60) {
-              return "/quote-results-f6080";
+              return "/quote-results/f6080";
           }
         }
     }
