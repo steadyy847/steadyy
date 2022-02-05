@@ -1,3 +1,55 @@
+function chkErrors(objectAffected, focusState, object, dob_month, dob_day, dob_year) {
+	if (focusState == 'focusin') {
+		$("."+objectAffected+"_error").hide(500);
+		return false;
+	} else if (focusState == 'focusout') {
+		if (objectAffected == 'zip') {
+			if (object.val().length == 5) {
+				$("."+objectAffected+"_error").hide(500);
+				return false;
+			} else {
+				$("."+objectAffected+"_error").show(500);
+				return true;
+			}
+		}
+		if (objectAffected == 'dob') {
+				if ($form.find('input[id="dob_month"]').val().length > 0 && $form.find('input[id="dob_day"]').val().length > 0 && $form.find('input[id="dob_year"]').val().length == 4) {
+					$("."+objectAffected+"_error").hide(500);
+					return false;
+  		    } else {
+					$("."+objectAffected+"_error").show(500);
+					return true;
+				}
+		}
+    if (objectAffected == 'income') {
+				if (object.val().length > 5 && object.val().length < 14) {
+						$("."+objectAffected+"_error").hide(500);
+						return false;
+				} else {
+						$("."+objectAffected+"_error").show(500);
+						return true;
+				}
+    }
+    if (objectAffected == 'gender') {
+				if ($("input[name='Gender']:checked").val() != undefined) {
+						$("."+objectAffected+"_error").hide(500);
+						return false;
+				} else {
+						$("."+objectAffected+"_error").show(500);
+						return true;
+				}
+		}
+    if (objectAffected == 'citizen') {
+				if ($("input[name='Citizenship']:checked").val() != undefined) {
+						$("."+objectAffected+"_error").hide(500);
+						return false;
+				} else {
+						$("."+objectAffected+"_error").show(500);
+						return true;
+				}
+		}
+	}
+}
 
 function dateDiff(startingDate, endingDate) {
     var startDate = new Date(new Date(startingDate).toISOString().substr(0, 10));
