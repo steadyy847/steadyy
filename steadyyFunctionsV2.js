@@ -1,6 +1,18 @@
-function chkErrors() {
-	$(".dob_error").hide(500);
-	return false;
+function chkErrors(objectAffected, object, focusState) {
+	if (focusState == 'foucusin') {
+		$("."+objectAffected+"_error").hide(500);
+		return false;
+	} else if (focusState == 'foucusout') {
+		if (objectAffected == 'zip') {
+			if (object.val().length == 5) {
+				$("."+objectAffected+"_error").hide(500);
+				return false;
+			} else {
+				$("."+objectAffected+"_error").show(500);
+				return true;
+			}
+		}
+	}
 }
 
 function dateDiff(startingDate, endingDate) {
