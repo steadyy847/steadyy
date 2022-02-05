@@ -1,19 +1,3 @@
-function chkErrors(objectAffected, object, focusState) {
-	if (focusState == 'foucusin') {
-		$("."+objectAffected+"_error").hide(500);
-		return false;
-	} else if (focusState == 'foucusout') {
-		if (objectAffected == 'zip') {
-			if (object.val().length == 5) {
-				$("."+objectAffected+"_error").hide(500);
-				return false;
-			} else {
-				$("."+objectAffected+"_error").show(500);
-				return true;
-			}
-		}
-	}
-}
 
 function dateDiff(startingDate, endingDate) {
     var startDate = new Date(new Date(startingDate).toISOString().substr(0, 10));
