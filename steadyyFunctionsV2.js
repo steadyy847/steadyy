@@ -1,3 +1,8 @@
+function chkErrors() {
+	$(".dob_error").hide(500);
+	return false;
+}
+
 function dateDiff(startingDate, endingDate) {
     var startDate = new Date(new Date(startingDate).toISOString().substr(0, 10));
     if (!endingDate) {
