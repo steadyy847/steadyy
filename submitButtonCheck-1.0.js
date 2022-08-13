@@ -6,7 +6,26 @@
 				cancer_CB = document.getElementById('cancer').checked,
 				sleep_apnea_CB = document.getElementById('sleep_apnea').checked,
 				diabetes_CB = document.getElementById('diabetes').checked,
-				no_conditions_CB = document.getElementById('no_conditions').checked;
+				no_conditions_CB = document.getElementById('no_conditions').checked,
+		    
+				className = 'button_active',
+				storage = window.localStorage,
+				$body_next = $form.find( '#body-step' ),
+				$tobacco_next = $form.find( '#tobacco-step' ),
+				$conditions_next = $form.find( '#conditions-step' ),
+				$license_next = $form.find( '#license-step' ),
+				$income_next = $form.find( '#income-step' ),
+				$height_feet = $form.find('input[id="height_feet"]'),
+				$height_inches = $form.find('input[id="height_inches"]'),
+				$weight = $form.find('input[id="weight"]'),
+				$tobacco = $form.find('.tobacco'),
+				tobacco_selected = $("input[name='Tobacco']:checked").val(),
+
+				height_errors = false,
+				weight_errors = false,
+				weight_valid_error = false,
+				tobacco_errors,
+				strDateTime = getFormattedDate();
 
 		if (page == "body") {
 			if ($height_feet.val() != '' && /^([\w\']{2,2})?$/.test($height_feet.val()) &&
