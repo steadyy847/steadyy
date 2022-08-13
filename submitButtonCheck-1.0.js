@@ -8,6 +8,7 @@
 				diabetes_CB = document.getElementById('diabetes').checked,
 				no_conditions_CB = document.getElementById('no_conditions').checked,
 		    
+				$form = $(this),
 				className = 'button_active',
 				storage = window.localStorage,
 				$body_next = $form.find( '#body-step' ),
