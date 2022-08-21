@@ -364,18 +364,18 @@ function AddZero(num) {
 }
 
 function dayValuesCheck(thisValue) {
-	  if (thisValue < 0) {
-		  return null;}
-    if ($('#dob_month').val() == 2) {
-      console.log("In the IF clause, where thisValue = "+thisValue);}
-      console.log("$('#dob_month').val() = "+$('#dob_month').val());
-	    if (thisValue > 29 && thisValue < 100) {
-		  return thisValue.slice(0, 1);}
-    }
-	  if (thisValue.length > 2) {
-		  return thisValue.slice(0, 2);}
-    }
-	  return thisValue;
+	if (thisValue < 0) {
+		return null;}
+	if ($('#dob_month').val() == 2) {
+		console.log("In the IF clause, where thisValue = "+thisValue);
+		console.log("$('#dob_month').val() = "+$('#dob_month').val());
+		if (thisValue > 29 && thisValue < 100) {
+			return thisValue.slice(0, 1);}
+	}
+	if (thisValue.length > 2) {
+		return thisValue.slice(0, 2);}
+
+	return thisValue;
 }
 
 function monthValuesCheck(thisValue) {
