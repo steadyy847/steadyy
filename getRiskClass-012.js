@@ -82,7 +82,7 @@ function getRiskClass(document) {
 			} else {
 					years_since_last_tobacco_use = Math.max(years_since_last_cigarette, years_since_last_pipe, years_since_last_chew, years_since_last_patch);
 			}
-			console.log(years_since_last_tobacco_use);
+  			console.log("Years Sinec Last Tobacco Use="+years_since_last_tobacco_use);
 	}
 // Evaluate Cancer History
 
