@@ -375,10 +375,11 @@ for (var i = 0; i < riskClasses.length; i++) {
   }
 }
 
-console.log("The smallest value is: " + smallestValue);
-
+console.log("The final risk class (taking the smallest value) is: " + smallestValue);
+		var risk_class = smallestValue;
     return {
-        smallestValue
+        risk_class,
+				tobacco
     };
 } 
 
