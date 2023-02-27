@@ -87,7 +87,7 @@ $(document).ready(function() {
 	$('#quote_initiated_datetime').val(strDateTime);
 	storage.setItem('quote_initiated_datetime', strDateTime);
 	console.log('document.getElementById("submit_from_city").value='+document.getElementById("submit_from_city").value);
-	console.log('document.getElementById("submit_from_ip_address").value='+document.getElementById("submit_from_ip_address").value):
+	console.log('document.getElementById("submit_from_ip_address").value='+document.getElementById("submit_from_ip_address").value);
 	storage.setItem('quote_initiated_from_city', document.getElementById("submit_from_city").value);
 	storage.setItem('quote_initiated_from_ip_address', document.getElementById("submit_from_ip_address").value);
 
