@@ -100,7 +100,8 @@
 			console.log("thisObject.id="+thisObject.id+"\n"+
 									"thisObject.name="+thisObject.name);
 
-			console.log("asthma_CB="+asthma_CB+"\n"+
+			console.log("-- Checkbox status at beginning of the function to evaluate them --\n"
+									"asthma_CB="+asthma_CB+"\n"+
 									"depression_CB="+depression_CB+"\n"+
 									"heart_attack_CB="+heart_attack_CB+"\n"+
 									"stroke_CB="+stroke_CB+"\n"+
@@ -163,6 +164,16 @@
 			sleep_apnea_CB = document.getElementById('sleep_apnea').checked;
 			diabetes_CB = document.getElementById('diabetes').checked;
 			no_conditions_CB = document.getElementById('no_conditions').checked;
+
+			console.log("** Checkbox status after rechecking them at end of function to evaluate them **\n"
+									"asthma_CB="+asthma_CB+"\n"+
+									"depression_CB="+depression_CB+"\n"+
+									"heart_attack_CB="+heart_attack_CB+"\n"+
+									"stroke_CB="+stroke_CB+"\n"+
+									"cancer_CB="+cancer_CB+"\n"+
+									"sleep_apnea_CB"+sleep_apnea_CB+"\n"+
+									"diabetes_CB"+diabetes_CB+"\n"+
+									"no_conditions_CB"+no_conditions_CB);
 
 			if (asthma_CB || depression_CB || heart_attack_CB || stroke_CB || cancer_CB || sleep_apnea_CB || diabetes_CB || no_conditions_CB) {
 					$('#conditions-alert-required').hide(500);
