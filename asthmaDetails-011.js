@@ -15,6 +15,7 @@ Webflow.push(function(){
 			'use strict';
 			var form = '.quote',
 					className = 'submit_button_active',
+     			className2 = 'button_active',
 					storage = window.localStorage,
 					submit = 'input[type="submit"]',
 					diagnosis_month = 'input[id="diagnosis_month"]',
@@ -27,8 +28,13 @@ Webflow.push(function(){
 
 			$(form).each(function() {
 				var $form = $(this),
+      			$asthma_more_next = $form.find( '#asthma-more-step' ),
+      			currentPage = 3, // PAGE: asthma = 3
+      			nextPage,
+      			last_focus,
 						$submit = $form.find( submit ),
 						enabled = true,
+            submit_errors = true,
 						$diagnosis_month = $form.find( diagnosis_month ),
 						$diagnosis_year = $form.find( diagnosis_year ),
             $attacks_per_year = $form.find( attacks_per_year ),
@@ -185,6 +191,26 @@ Webflow.push(function(){
 						submitButtonCheck();
 					}
 				});
+
+  			$('#asthma-more-step').click(function(e) {
+  				e.preventDefault();
+          submitButtonCheck();
+
+  				nextPage = getRedirectURL(currentPage);
+
+          if (submit_errors == false) {
+        		document.getElementById("asthma-more-step").disabled = false;
+  					location.href = nextPage;
+  				} else {
+        		document.getElementById("asthma-more-step").disabled = true;
+          }
+  			});
+        
+  			$('#asthma-more-prev').click(function(e) {
+  				e.preventDefault();
+  				window.history.back();
+  			});
+
 				function submitButtonCheck() {
 					var diagnosis_selected = $("input[name='Diagnosis']:checked").val(),
 							treatment_past_selected = $("input[name='TreatmentPast']:checked").val(),
@@ -270,9 +296,17 @@ Webflow.push(function(){
 					 && conditionals_for_treatment_satisfied
 					 && conditionals_for_hospitalization_satisfied
 					) {
+           		document.getElementById("asthma-more-step").disabled = false;
+    					$asthma_more_next.toggleClass(className2, true);
+    					submit_errors = false;
+
               document.getElementById("submit_button").disabled = false;
 							$submit.toggleClass(className, true);
 					} else {
+           		document.getElementById("tobacco-more-step").disabled = true;
+    					$asthma_more_next.toggleClass(className2, false);
+    					submit_errors = true;
+
               document.getElementById("submit_button").disabled = true;
 							$submit.toggleClass(className, false);
           }
