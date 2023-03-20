@@ -409,7 +409,7 @@ Webflow.push(function(){
 function chkAsthmaDetailErrors(objectAffected, focusState, object, $form, last_focus) {
 	var error_color = "#AC0036",
 	    no_error_color = "#DEDEDE",
-	    $diagnosis_date = $form.find('.diagnosis-date'),
+//	    $diagnosis_date = $form.find('.diagnosis-date'),
 			$diagnosis_month = $form.find( 'input[id="diagnosis_month"]' ),
 			$diagnosis_year = $form.find( 'input[id="diagnosis_year"]' ),
 	    $diagnosis_severity = $form.find('.diagnosis-severity'),
