@@ -155,7 +155,7 @@ Webflow.push(function(){
 
           if (submit_errors) {
         		document.getElementById("cancer-more-step").disabled = true;
-            if (!diagnosis_date_errors && !diagnosis_severity_errors && !past_treatment_errors && !current_treatment_errors && !treatment_types_errors && !attacks_per_year_errors && !hospitalization_errors && !hosp_past_year_errors && !hosp_total_errors && !hospitalization_date_errors) {
+            if (!cancer_type_errors && !diagnosis_date_errors && !cancer_stage_errors && !treatment_date_errors && !other_details_errors) {
    					  $(".page_error").show(500);
             } else {
    					  $(".page_error").hide(500);
