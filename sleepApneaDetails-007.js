@@ -178,6 +178,7 @@ Webflow.push(function(){
 				  if (this.value.length == 3) {
 						if (this.value > 100) {
 							this.value.slice(0, 2);
+							console.log("this.value was > 100, so trimmed it to "+this.value);
 						}
 					}
 				});
@@ -187,6 +188,7 @@ Webflow.push(function(){
 				  if (this.value.length == 3) {
 						if (this.value > 100) {
 							this.value.slice(0, 2);
+							console.log("this.value was > 100, so trimmed it to "+this.value);
 						}
 					}
 				});
@@ -196,6 +198,7 @@ Webflow.push(function(){
 				  if (this.value.length == 3) {
 						if (this.value > 100) {
 							this.value.slice(0, 2);
+							console.log("this.value was > 100, so trimmed it to "+this.value);
 						}
 					}
 				});
@@ -205,6 +208,7 @@ Webflow.push(function(){
 				  if (this.value.length == 3) {
 						if (this.value > 100) {
 							this.value.slice(0, 2);
+							console.log("this.value was > 100, so trimmed it to "+this.value);
 						}
 					}
 				});
