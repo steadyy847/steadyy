@@ -99,7 +99,7 @@ $(document).ready(function() {
 
 	var commit_point = storage.getItem('commit_point');
 	console.log("commmit_point = "+commit_point);
-	if(commit_point == null || commit_point == "") {
+	if(commit_point == null || commit_point == "" || commit_point == undefined) {
 		let modalObject = $('.modal');
 		modalObject.hide(450);
 		modalObject.css('opacity', 0);    
