@@ -97,7 +97,7 @@ $(document).ready(function() {
 	var commit_point = storage.getItem('commit_point');
 	if(commit_point !== null && commit_point !== "" && commit_point !== undefined && (storage.getItem('navigation_from') !== "1-basics")) {
 		let modalObject = $('.modal');
-		modalObject.show(250);
+		modalObject.show(150);
 		modalObject.css('opacity', 1);    
 		modalObject.css('display', 'flex');
 	}
