@@ -352,11 +352,9 @@ Webflow.push(function(){
 
 				$('#birthplace').on('change', 'input, select, textarea', function() {
 	    		if ($form.find('#birthplace').val() != 'foreign birth') {
-						$('#birth_country_container_placeholder').show(500);
-						$('#birth_country_container').show(500);
+						$('.birth-country').show(500);
 					} else {
-						$('#birth_country_container_placeholder').hide(500);
-						$('#birth_country_container').hide(500);
+						$('.birth-country').hide(500);
 						$('#country_of_birth').val("");
 					}
 				});
