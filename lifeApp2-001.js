@@ -70,7 +70,7 @@ Webflow.push(function(){
 		;
 		(function($, window, document, undefined) {
 			'use strict';
-			var form = '.application',
+			var form = '.app-page2',
 					className = 'submit_button_active',
 					submit = 'input[type="submit"]';
 
@@ -345,8 +345,6 @@ Webflow.push(function(){
 				}
 
 				function submitButtonCheck() {
-					var storage = window.localStorage;
-
 					checkAdditionalPolicyDetails();
 
 					if (conditionals_for_other_insurance_satisfied)
