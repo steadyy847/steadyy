@@ -116,6 +116,7 @@ Webflow.push(function(){
 				  var place = autocomplete.getPlace();
 
 					formattedAddress = place.formatted_address;
+					storage.setItem('app_formatted_address', formattedAddress);
 
 					if (place && place.address_components) {
 				    // Loop through address components to find the postal code, state, and city
