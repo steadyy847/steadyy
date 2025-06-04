@@ -793,8 +793,6 @@ $(function () {
           const num = parseInt(raw, 10);
           const formatted = isNaN(num) ? '' : num + '%';
 
-          console.log(`raw = ${raw}, num = ${num}`);
-
           // Reset errors
           $errorRequired.hide(500);
           $errorInvalid.hide(500);
