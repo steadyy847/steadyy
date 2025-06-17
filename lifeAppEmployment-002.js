@@ -1,0 +1,1268 @@
+// Globally defined variables
+var storage = window.localStorage,
+    className = 'submit_button_active',
+    $submit = $('input[type="submit"]'),
+    error_color = '#AC0036',
+    no_error_color = '#C5C5C5',
+
+		//  Fields entered (and submitted) on page 1 of the application
+		$first_name = $('#app_first_name'),
+		$last_name = $('#app_last_name'),
+		$home_address = $('#app_home_address'),
+		$address_length = $('#app_address_length'),
+		$email_address = $('#app_email_address'),
+		$phone_number = $('#app_phone_number'),
+
+		//  Fields for page 2 of the application
+		$employer = $('#employer'),
+		$occupation = $('#occupation'),
+    $employer_address = $('#employer_address'),
+    $employer_street_number = $('#employer_street_number'),
+    $employer_street = $('#employer_street'),
+    $employer_address_line1 = $('#employer_address_line1'),
+    $employer_address_line2 = $('#employer_address_line2'),
+    $employer_city = $('#employer_city'),
+    $employer_state = $('#employer_state'),
+    $employer_zip = $('#employer_zip'),
+    $years_employed = $('#years_employed'),
+		$personal_income = $('#personal_income'),
+    $income_variability = $('#income_variability'),
+
+		$household_income = $('#household_income'),
+		$net_worth = $('#net_worth'),
+    $bankruptcy = $('#bankruptcy'),
+    $other_apps_declined = $('#other-apps-declined'),
+    $other_life_insurance = $('#other-life-insurance'),
+
+		$other_policy_coverage_amt_1 = $('#other_policy_coverage_amt_1'),
+		$other_policy_coverage_amt_2 = $('#other_policy_coverage_amt_2'),
+		$other_policy_coverage_amt_3 = $('#other_policy_coverage_amt_3'),
+		$other_policy_coverage_amt_4 = $('#other_policy_coverage_amt_4'),
+		$other_policy_coverage_amt_5 = $('#other_policy_coverage_amt_5'),
+
+		// Variables to track what has been filled in
+		other_policy_ct = 0,
+		conditionals_for_policy1_satisfied,
+		conditionals_for_policy2_satisfied,
+		conditionals_for_policy3_satisfied,
+		conditionals_for_policy4_satisfied,
+		conditionals_for_policy5_satisfied,
+		conditionals_for_other_insurance_satisfied;
+
+let addressSelectedWithMouse = false,
+    formattedAddress = '',
+    street_number = '',
+    street = '',
+    address_line1 = '',
+    address_line2 = '',
+    city = '',
+    state = '',
+    postalCode = '';
+
+// Utility functions
+var conv = function (str) {
+    if (!str) {
+        str = 'empty';
+    }  return str.replace(/[!\"#$%&'\(\)\*\+,\.\/:;<=>\?\@\[\\\]\^`\{\|\}~]/g, '')
+              .replace(/ /g, "-")
+              .toLowerCase()
+              .trim();
+  };
+
+var catArray = document.querySelectorAll('.w-dyn-item .categ');
+catArray.forEach( function(elem) {
+  var text = elem.innerText || elem.innerContent;
+  var className = conv(text);
+  if (!isNaN(parseInt(className.charAt(0), 10))) {
+          className = ("_" + className);
+        }
+  elem.closest(".mix").classList.add(className);
+});
+
+function submitButtonCheck() {
+	checkAdditionalPolicyDetails();
+
+	var income_variability_selected = $("input[name='IncomeVariability']:checked").val(),
+			bankruptcy_selected = $("input[name='Bankruptcy']:checked").val(),
+			other_insurance_decline_selected = $("input[name='OtherLifeInsuranceDecline']:checked").val();
+
+	if ($employer.val().length > 0 &&
+			$occupation.val().length > 0 &&
+	    // check that address is not empty and that it is a valid address formatted by the Google API,
+	    // complete with a valid address line 1 (street number + street name), city, state & zip & 
+	    // that it is in a valid state where we are licensed to sell life insurance
+	    $employer_address.val() != '' &&
+	    formattedAddress != '' &&
+	    $employer_address_line1.val() != '' &&
+	    $employer_city.val() != '' &&
+	    $employer_state.val() != '' &&
+	    $employer_zip.val() != '' &&
+	    $years_employed.val().length > 0 &&
+			($personal_income.val().length > 5 && $personal_income.val().length < 11) &&
+			income_variability_selected != null &&
+			($household_income.val().length > 5 && $household_income.val().length < 11) &&
+			$net_worth.val() != "" &&
+			bankruptcy_selected != null &&
+			other_insurance_decline_selected != null &&
+			conditionals_for_other_insurance_satisfied)
+	{
+      document.getElementById("submit_button").disabled = false;
+			$submit.toggleClass(className, true);
+	} else {
+			document.getElementById("submit_button").disabled = true;
+			$submit.toggleClass(className, false);
+  }
+}
+
+function checkAdditionalPolicyDetails() {
+	var other_insurance_selected = $("input[name='OtherLifeInsurance']:checked").val();
+
+	if (other_insurance_selected == "Yes") {
+			for (let x = 1; x < other_policy_ct+1; x++) {
+				if ( $('#other_carrier_'+x).val() != ''
+					&& $('#other_policy_num_'+x).val() != ''
+					&& $('#other_policy_year_issued_'+x).val() != ''
+					&& ($('#other_policy_coverage_amt_'+x).val().length > 4 && $('#other_policy_coverage_amt_'+x).val().length < 11)
+					&& $('#other_policy_type_'+x).val() != ''
+					&& $("input[name='Policy-"+x+"-Replacement-Flag']:checked").val() != null
+				) {
+					switch (x) {
+						case 1: conditionals_for_policy1_satisfied = true; break;
+						case 2: conditionals_for_policy2_satisfied = true; break;
+						case 3: conditionals_for_policy3_satisfied = true; break;
+						case 4: conditionals_for_policy4_satisfied = true; break;
+						case 5: conditionals_for_policy5_satisfied = true; break;
+						default: break;
+					}
+				} else {
+					switch (x) {
+						case 1: conditionals_for_policy1_satisfied = false; break;
+						case 2: conditionals_for_policy2_satisfied = false; break;
+						case 3: conditionals_for_policy3_satisfied = false; break;
+						case 4: conditionals_for_policy4_satisfied = false; break;
+						case 5: conditionals_for_policy5_satisfied = false; break;
+						default: break;
+					}
+				}
+			}
+
+			// Check to see if any of the additional policies that were added, have all required data entered
+			if (conditionals_for_policy1_satisfied == false ||
+					conditionals_for_policy2_satisfied == false ||
+					conditionals_for_policy3_satisfied == false ||
+					conditionals_for_policy4_satisfied == false ||
+					conditionals_for_policy5_satisfied == false) {
+				conditionals_for_other_insurance_satisfied = false;
+				$("#error-other-policies-required").hide(500);
+				$("#error-other-policies-all-fields-required").show(500);
+		    $other_life_insurance.css("border-color", error_color);
+			}	else {
+				conditionals_for_other_insurance_satisfied = true;
+				$("#error-other-policies-required").hide(500);
+				$("#error-other-policies-all-fields-required").hide(500);
+		    $other_life_insurance.css("border-color", no_error_color);
+			}
+	}
+}
+
+// Init functions
+let autocomplete;
+function initAutocomplete() {
+  console.log('Google Maps API initialized');
+  const gpaInput = document.getElementById('employer_address');
+  if (!gpaInput) {
+    console.error("Element with ID 'employer_address' not found");
+    return;
+  }
+  
+  autocomplete = new google.maps.places.Autocomplete(gpaInput, {
+    fields: ['address_components', 'formatted_address', 'geometry'],
+    componentRestrictions: { country: ['us'] }
+  });
+
+  autocomplete.addListener('place_changed', onPlaceChanged);
+
+  document.addEventListener('mousedown', function(event) {
+    if (event.target.classList.contains('pac-item') || event.target.closest('.pac-item')) {
+      addressSelectedWithMouse = true;
+    }
+  });
+}
+// Expose initAutocomplete globally for Google API callback
+window.initAutocomplete = initAutocomplete;
+
+function onPlaceChanged() {
+  const place = autocomplete.getPlace();
+
+  // Handle address parsing logic
+  formattedAddress = place.formatted_address;
+  storage.setItem('employer_formatted_address', formattedAddress);
+
+  if (place && place.address_components) {
+    // Loop through address components to find the postal code, state, and city
+    for (var y = 0; y < place.address_components.length; y++) {
+      if (place.address_components[y].types.includes('street_number')) {
+        street_number = place.address_components[y].long_name;
+      }
+      if (place.address_components[y].types.includes('route')) {
+        street = place.address_components[y].long_name;
+      }
+      if (place.address_components[y].types.includes('subpremise')) {
+        address_line2 = place.address_components[y].long_name;
+      }
+      if (place.address_components[y].types.includes('locality')) {
+        city = place.address_components[y].long_name;
+      }
+      if (
+        place.address_components[y].types.includes(
+          'administrative_area_level_1'
+        )
+      ) {
+        state = place.address_components[y].short_name;
+      }
+      if (place.address_components[y].types.includes('postal_code')) {
+        postalCode = place.address_components[y].long_name;
+      }
+    }
+
+    // Set the city, state & zip from the Google Places API to the employer_city, employer_state, & employer_zip fields
+    if (street_number) {
+      $('#employer_street_number').val(street_number);
+      storage.setItem('employer_street_number', street_number);
+    }
+    if (street) {
+      $('#employer_street').val(street);
+      storage.setItem('employer_street', street);
+    }
+    if (street_number && street) {
+      address_line1 = street_number + ' ' + street;
+      $('#employer_address_line1').val(address_line1);
+      storage.setItem('employer_address_line1', address_line1);
+    }
+    if (address_line2) {
+      $('#employer_address_line2').val(address_line2);
+      storage.setItem('employer_address_line2', address_line2);
+    }
+    if (city) {
+      $('#employer_city').val(city);
+      storage.setItem('employer_city', city);
+    }
+    if (state) {
+      $('#employer_state').val(state);
+      storage.setItem('employer_state', state);
+    }
+    if (postalCode) {
+      $('#employer_zip').val(postalCode);
+      storage.setItem('employer_zip', postalCode);
+    }
+  }
+
+  if (
+    formattedAddress != '' &&
+    address_line1 != '' &&
+    city != '' &&
+    state != '' &&
+    postalCode != ''
+  ) {
+
+    // If all of the fields are full, then that means we have a valid, Google Maps API formatted address and should remove all error messages
+    $('#error-address-not-valid').hide(500);
+    $('#error-address-required').hide(500);
+    $employer_address.css('border-color', no_error_color);
+  } else if (
+    // Looks like we got a an address back from the Google Places API, but it wasn't fully valid as one of the parts was missing (e.g. like an intersection only)
+    formattedAddress != '' &&
+    (address_line1 != '' ||
+      city != '' ||
+      state != '' ||
+      postalCode != '')
+  ) {
+    // If there was a Google Maps API returned location, but it isn't a complete address (e.g. just city or neighborhood), show message that need users help getting a 'good' formatted address
+    $('#error-address-required').hide(500);
+    $('#error-address-not-valid').show(500);
+    $employer_address.css('border-color', error_color);
+  }
+
+  submitButtonCheck();
+
+  // Set focus back to the home_address field when the user selects an address with their mouse.
+  setTimeout(function() {
+    const active = document.activeElement;
+    if (addressSelectedWithMouse) {
+      if (!active || active.id === 'employer_address' || active.tagName === 'BODY') {
+        $('#employer_address').focus();
+      }
+      // Reset flag after acting
+      addressSelectedWithMouse = false;
+    }
+  }, 100);
+}
+
+// Set the filter up based on data stored from previous page in localStorage, and use to create call for the mixer function
+var term = storage.getItem('app_term_selected'),
+		coverage = storage.getItem('app_coverage_selected'),
+		premium_formatted = storage.getItem('app_premium_selected'),
+		prem_dollars = premium_formatted.slice(1, premium_formatted.length - 3),
+		prem_cents = premium_formatted.slice(premium_formatted.length - 3, premium_formatted.length),
+		carrier = storage.getItem('app_carrier_selected').toLowerCase(),
+		filter_string = '.'+conv(carrier);
+
+var commitPointItem = storage.getItem('commit_point');
+var numericPartOfCommitPoint = commitPointItem ? parseInt(commitPointItem.split('-')[0]) : null;
+
+if (numericPartOfCommitPoint > 14) {
+  $('#commit_point').val(commitPointItem);
+} else {
+  storage.setItem('commit_point', "14-application");
+  $('#commit_point').val("14-application");
+}
+storage.setItem('navigation_from', "14-application");
+
+$('#quote_initiated_datetime').val(storage.getItem('quote_initiated_datetime'));
+$('#quote_initiated_from_ip_address').val(storage.getItem('quote_initiated_from_ip_address'));
+$('#quote_initiated_from_city').val(storage.getItem('quote_initiated_from_city'));
+
+function getUserDeviceInfo() {
+  const userAgent = navigator.userAgent;
+  let browserName, deviceType, operatingSystem;
+
+  // Determine browser
+  if (userAgent.includes('Chrome') && !userAgent.includes('Edge') && !userAgent.includes('OPR')) {
+    browserName = 'Google Chrome';
+  } else if (userAgent.includes('Safari') && !userAgent.includes('Chrome')) {
+    browserName = 'Safari';
+  } else if (userAgent.includes('Firefox')) {
+    browserName = 'Mozilla Firefox';
+  } else if (userAgent.includes('Edge')) {
+    browserName = 'Microsoft Edge';
+  } else if (userAgent.includes('OPR') || userAgent.includes('Opera')) {
+    browserName = 'Opera';
+  } else if (userAgent.includes('Trident') || userAgent.includes('MSIE')) {
+    browserName = 'Internet Explorer';
+  } else {
+    browserName = 'Unknown';
+  }
+
+  // Determine device type
+  if (/Mobile|Android|iPhone|iPad|iPod/.test(userAgent)) {
+    deviceType = 'Mobile';
+  } else if (/Tablet|iPad/.test(userAgent)) {
+    deviceType = 'Tablet';
+  } else {
+    deviceType = 'Desktop';
+  }
+
+  // Determine operating system
+  if (/iPhone|iPad|iPod/.test(userAgent)) {
+    operatingSystem = 'iOS';
+  } else if (/Android/.test(userAgent)) {
+    operatingSystem = 'Android';
+  } else if (/Windows NT/.test(userAgent)) {
+    operatingSystem = 'Windows';
+  } else if (/Macintosh|Mac OS X/.test(userAgent)) {
+    operatingSystem = 'Mac OS';
+  } else if (/Linux/.test(userAgent)) {
+    operatingSystem = 'Linux';
+  } else {
+    operatingSystem = 'Unknown';
+  }
+
+  // Get viewport width
+  const viewportWidth = window.innerWidth;
+
+  console.log(`Device Type: ${deviceType}`);
+  console.log(`OS: ${operatingSystem}`);
+  console.log(`Browser: ${browserName}`);
+  console.log(`Viewport Width: ${viewportWidth}px`);
+
+  return { deviceType, operatingSystem, browserName, viewportWidth };
+}
+
+// Use the function and format the result
+const deviceInfo = getUserDeviceInfo();
+const formattedInfo = `
+  Device Type: ${deviceInfo.deviceType} |<>|
+  OS: ${deviceInfo.operatingSystem} |<>|
+  Browser: ${deviceInfo.browserName} |<>|
+  Viewport Width: ${deviceInfo.viewportWidth}px
+`.trim();
+
+// Set the value in the form field
+$('#user_device').val(formattedInfo);
+
+//	Prefill the annual income stored in local storage from the needs/quote and reuse it here as confirmation, and as contrast to household income, which we also need to collect
+if (storage.getItem('annual_income') !== null) {
+		$('#personal_income').val(storage.getItem('annual_income'));
+		$('#floating-personal-income-label').addClass("float");
+}
+
+var mixer = mixitup('.container', {
+    multifilter: {
+        enable: true
+    },
+    load: {
+        filter: filter_string
+    }
+});
+
+var application_details = document.querySelector('.application-details');
+$(application_details).find('.premium_cents').text(prem_cents);
+$(application_details).find('.premium_dollars').text(prem_dollars);
+$(application_details).find('.coverage').text(coverage);
+$(application_details).find('.term').text(term+" years");
+
+$(document).ready(function () {
+	Webflow.push(function(){
+		$("#application").submit(function(){
+      // Check if the URL has any query parameters
+      if (window.location.search) {
+        // Retrieve the saved_app parameter if it was passed in the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const savedApp = urlParams.get('saved_app');
+        const step = parseInt(urlParams.get('step'), 10); // Convert step to an integer
+
+        // If the URL has the saved_app query params and the user has already completed 3 steps, then reset the submitButton href
+				// to take user back to the saved applications page, instead of onto app page 3 as if they were in normal flow
+        if (savedApp && !isNaN(step) && step > 2) {
+       		location.href = '/saved-applications/'+savedApp;
+        }
+      };
+		})
+	});
+});
+
+$(function() {
+	;
+	(function($, window, document, undefined) {
+		'use strict';
+		var form = '.application';
+
+		$(form).each(function() {
+			var $form = $(this),
+					submit = 'input[type="submit"]',
+					enabled = true,
+
+					//  Grab the fields entered (and submitted) on page 1 of the application
+					first_name = storage.getItem('app_first_name'),
+					last_name = storage.getItem('app_last_name'),
+					address_line1 = storage.getItem('app_address_line1'),
+					address_line2 = storage.getItem('app_address_line2'),
+					city = storage.getItem('app_city'),
+					state = storage.getItem('app_state'),
+					postalCode = storage.getItem('app_zip'),
+					email = storage.getItem('quote_email_address'),
+					phone_number =  storage.getItem('app_phone_number');
+
+			$submit = $form.find(submit);
+      document.getElementById('submit_button').disabled = true;
+
+		  $employer_address.attr('autocomplete', 'off');
+
+      if (address_line2 == null) {
+      		address_line2 = "";
+      }
+
+			//  Repopulate the hidden fields entered (and submitted) on page 1 of the application to be able to tie this page back to it on the back end
+			$first_name.val(first_name);
+			$last_name.val(last_name);
+      if (address_line2.length > 0) {
+				$home_address.val(address_line1+" "+address_line2+", "+city+", "+state+"  "+postalCode);
+      } else {
+				$home_address.val(address_line1+", "+city+", "+state+"  "+postalCode);
+			}
+			$email_address.val(email);
+			$phone_number.val(phone_number);
+
+			document.getElementById("submit_button").disabled = true;
+
+			$personal_income.mask("#,##0", {reverse: true});
+			$household_income.mask("#,##0", {reverse: true});
+
+			$other_policy_coverage_amt_1.mask("#,##0", {reverse: true});
+			$other_policy_coverage_amt_2.mask("#,##0", {reverse: true});
+			$other_policy_coverage_amt_3.mask("#,##0", {reverse: true});
+			$other_policy_coverage_amt_4.mask("#,##0", {reverse: true});
+			$other_policy_coverage_amt_5.mask("#,##0", {reverse: true});
+
+			$("input[name='OtherLifeInsurance']").click(function(e) {
+				var other_insurance_selected = $("input[name='OtherLifeInsurance']:checked").val();
+				if (other_insurance_selected == "Yes") {
+					$("#additional_policy_1").show(500);
+					$(".add_next_policy").show(500);
+					other_policy_ct = 1;
+				} else if (other_insurance_selected == "No") {
+
+					for (let i = 1; i < 6; i++) {
+							$('#other_carrier_'+i).val("");
+							$('#other_carrier_'+i+'_label').removeClass('float');
+							$('#other_policy_num_'+i).val("");
+							$('#other_policy_num_'+i+'_label').removeClass('float');
+							$('#other_policy_year_issued_'+i).val("");
+							$('#other_policy_year_issued_'+i+'_label').removeClass('float');
+							$('#other_policy_coverage_amt_'+i).val("");
+							$('#other_policy_coverage_amt_'+i+'_label').removeClass('float');
+							$('#other_policy_type_'+i).val("");
+							$('#other_policy_type_'+i+'_label').removeClass('float');
+
+						  $("input[name='Policy-"+i+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+							$("input[name='Policy-"+i+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+						  $("input[name='Policy-"+i+"-Replacement-Flag'][value='No']").prop("checked", false);
+							$("input[name='Policy-"+i+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+
+							$("#additional_policy_"+i).hide(500);
+					}
+					$(".add_next_policy").hide(500);
+					other_policy_ct = 0;
+					conditionals_for_other_insurance_satisfied = true;
+					submitButtonCheck();
+				}
+			});
+
+			function removePolicy(i) {
+				// If user is trying to delete policy out of order (e.g. not the last one), then cascade the values of higher count policy(ies) to the targeted one for deletion first
+				for (let x = i; x < other_policy_ct; x++) {
+					var target_policy_to_move = x+1;
+
+					$('#other_carrier_'+x).val($('#other_carrier_'+target_policy_to_move).val());
+					$('#other_policy_num_'+x).val($('#other_policy_num_'+target_policy_to_move).val());
+					$('#other_policy_year_issued_'+x).val($('#other_policy_year_issued_'+target_policy_to_move).val());
+					$('#other_policy_coverage_amt_'+x).val($('#other_policy_coverage_amt_'+target_policy_to_move).val());
+					$('#other_policy_type_'+x).val($('#other_policy_type_'+target_policy_to_move).val());
+
+				  if ($("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag']:checked").val() == "Yes") {
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prop("checked", true);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').addClass('w--redirected-checked');
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prop("checked", false);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					} else if ($("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag']:checked").val() == "No") {
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prop("checked", true);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					} else {
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prop("checked", false);
+						$("input[name='Policy-"+x+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					}
+
+					$('#other_carrier_'+target_policy_to_move).val("");
+					$('#other_policy_num_'+target_policy_to_move).val("");
+					$('#other_policy_year_issued_'+target_policy_to_move).val("");
+					$('#other_policy_coverage_amt_'+target_policy_to_move).val("");
+					$('#other_policy_type_'+target_policy_to_move).val("");
+				  $("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+					$("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+				  $("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag'][value='No']").prop("checked", false);
+					$("input[name='Policy-"+target_policy_to_move+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+				}
+
+				i = other_policy_ct;
+
+				$('#other_carrier_'+i).val("");
+				$('#other_carrier_'+i+'_label').removeClass('float');
+				$('#other_policy_num_'+i).val("");
+				$('#other_policy_num_'+i+'_label').removeClass('float');
+				$('#other_policy_year_issued_'+i).val("");
+				$('#other_policy_year_issued_'+i+'_label').removeClass('float');
+				$('#other_policy_coverage_amt_'+i).val("");
+				$('#other_policy_coverage_amt_'+i+'_label').removeClass('float');
+				$('#other_policy_type_'+i).val("");
+				$('#other_policy_type_'+i+'_label').removeClass('float');
+
+			  $("input[name='Policy-"+i+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+				$("input[name='Policy-"+i+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+			  $("input[name='Policy-"+i+"-Replacement-Flag'][value='No']").prop("checked", false);
+				$("input[name='Policy-"+i+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+
+				$('#additional_policy_'+i).hide(500);
+				other_policy_ct = i-1;
+
+				switch (i) {
+					case 1: conditionals_for_policy1_satisfied = true; 
+								  $("input[name='OtherLifeInsurance'][value='Yes']").prop("checked", false);
+									$("input[name='OtherLifeInsurance'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+								  $("input[name='OtherLifeInsurance'][value='No']").prop("checked", true);
+									$("input[name='OtherLifeInsurance'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+									$(".add_next_policy").hide(500);
+									conditionals_for_other_insurance_satisfied = true; break;
+					case 2: conditionals_for_policy2_satisfied = true;
+									$(".add_next_policy").show(500); break;
+					case 3: conditionals_for_policy3_satisfied = true;
+									$(".add_next_policy").show(500); break;
+					case 4: conditionals_for_policy4_satisfied = true;
+									$(".add_next_policy").show(500); break;
+					case 5: conditionals_for_policy5_satisfied = true;
+									$(".add_next_policy").show(500); break;
+					default: break;
+				}
+				submitButtonCheck();
+			}
+
+			$('#remove_policy_1').click(function(e) {
+				e.preventDefault();
+				removePolicy(1);
+			});
+			$('#remove_policy_2').click(function(e) {
+				e.preventDefault();
+				removePolicy(2);
+			});
+			$('#remove_policy_3').click(function(e) {
+				e.preventDefault();
+				removePolicy(3);
+			});
+			$('#remove_policy_4').click(function(e) {
+				e.preventDefault();
+				removePolicy(4);
+			});
+			$('#remove_policy_5').click(function(e) {
+				e.preventDefault();
+				removePolicy(5);
+			});
+
+			$('#add-next-policy-button').click(function(e) {
+				switch (other_policy_ct) {
+					case 0:
+						$('#additional_policy_1').show(500);
+						other_policy_ct = 1; 
+						break;
+					case 1: 
+						$('#additional_policy_2').show(500);
+						other_policy_ct = 2; 
+						break;
+					case 2: 
+						$('#additional_policy_3').show(500);
+						other_policy_ct = 3; 
+						break;
+					case 3: 
+						$('#additional_policy_4').show(500);
+						other_policy_ct = 4; 
+						break;
+					case 4: 
+						$('#additional_policy_5').show(500);
+						other_policy_ct = 5; 
+						$(".add_next_policy").hide(500); 
+						break;
+					default: other_policy_ct = ""; 
+						break;
+				}
+				conditionals_for_other_insurance_satisfied = false;
+				submitButtonCheck();
+			});
+
+			$('form').on('change', 'input, select, textarea', function() {
+				if (enabled) {
+					submitButtonCheck();
+				}
+			});
+
+			$('form').on('keyup', 'input, select, textarea', function() {
+				if (enabled) {
+					submitButtonCheck();
+				}
+			});
+
+			$employer.on('input.True', function() {
+				if (this.value.length == 0) {
+					// Employer was likely cleared out and deleted, so show the 'Field is required' error message
+					$("#error-employer-required").show(500);
+          $employer.css("border-color", error_color);
+				} else {
+					// if there is at least one character input into this field, clear the error message
+					$("#error-employer-required").hide(500);
+          $employer.css("border-color", no_error_color);
+				}
+			});
+
+			$employer.on('focusout', function() {
+				if ($employer.val().length == 0) {
+					// if the employer field is blank, throw up an error message that this field is required 
+					$("#error-employer-required").show(500);
+          $employer.css("border-color", error_color);
+				} else {
+					// Under this condition the user has filled in employer, so get rid of all error messages
+					$("#error-employer-required").hide(500);
+			    $employer.css("border-color", no_error_color);
+				}
+			});
+
+			$occupation.on('input.True', function() {
+				if (this.value.length == 0) {
+					// Occupation was likely cleared out and deleted, so show the 'Field is required' error message
+					$("#error-occupation-required").show(500);
+          $occupation.css("border-color", error_color);
+				} else {
+					// if there is at least one character input into this field, clear the error message
+					$("#error-occupation-required").hide(500);
+          $occupation.css("border-color", no_error_color);
+				}
+			});
+
+			$occupation.on('focusout', function() {
+				if ($occupation.val().length == 0) {
+					// if the occupation field is blank, throw up an error message that this field is required 
+					$("#error-occupation-required").show(500);
+          $occupation.css("border-color", error_color);
+				} else {
+					// Under this condition the user has filled in occupation, so get rid of all error messages
+					$("#error-occupation-required").hide(500);
+			    $occupation.css("border-color", no_error_color);
+				}
+			});
+
+      $years_employed.on('change', function () {
+        if ($(this).val() == '') {
+          // Length of Time at Employer was likely reset, so show the 'Field is required' error message
+          $('#error-years-employed-required').show(500);
+          $years_employed.css('border-color', error_color);
+        } else {
+          // if there is something selected in this field, clear the error message
+          $('#error-years-employed-required').hide(500);
+          $years_employed.css('border-color', no_error_color);
+        }
+        submitButtonCheck();
+      });
+
+      $years_employed.on('focusout', function () {
+        if ($years_employed.val() == '') {
+          // if the Length of Time at Employer is empty, throw up an error message that this field is required
+          $('#error-years-employed-required').show(500);
+          $years_employed.css('border-color', error_color);
+        } else {
+          // Under this condition we got a selection, so get rid of all error messages
+          $('#error-years-employed-required').hide(500);
+          $years_employed.css('border-color', no_error_color);
+        }
+        submitButtonCheck();
+      });
+
+      $employer_address.on('input.True', function () {
+        if ($(this).val().length == 0) {
+          formattedAddress = '';
+          street_number = '';
+          street = '';
+          address_line1 = '';
+          address_line2 = '';
+          city = '';
+          state = '';
+          postalCode = '';
+
+          // Address was likely cleared out and deleted, so show the 'Address required' error message
+          $('#error-address-not-valid').hide(500);
+          $('#error-address-required').show(500);
+          $employer_address.css('border-color', error_color);
+        }
+        submitButtonCheck();
+      });
+
+			$employer_address.on('focusout', function () {
+			  if ($employer_address.val().length == 0) {
+			    // Blank field
+			    $('#error-address-not-valid').hide(500);
+			    $('#error-address-required').show(500);
+			    $employer_address.css('border-color', error_color);
+			  } else if (formattedAddress == '') {
+			    // User typed but DID NOT select a suggestion → show "Select from suggestions" error
+			    $('#error-address-required').hide(500);
+			    $('#error-address-not-valid').show(500);
+			    $employer_address.css('border-color', error_color);
+			  } else if (formattedAddress != '' && address_line1 != '' && city != '' && state != '' && postalCode != '') {
+			    // Valid address
+			    $('#error-address-not-valid').hide(500);
+			    $('#error-address-required').hide(500);
+			    $employer_address.css('border-color', no_error_color);
+			  } else if (formattedAddress != '' && (address_line1 != '' || city != '' || state != '' || postalCode != '')) {
+			    // Incomplete Google address
+			    $('#error-address-required').hide(500);
+			    $('#error-address-not-valid').show(500);
+			    $employer_address.css('border-color', error_color);
+			  }
+			  submitButtonCheck();
+			});
+
+			$personal_income.on('input.True', function() {
+				if (this.value.length == 0) {
+					// Personal Income was likely cleared out and deleted, so show the 'Field is required' error message
+					$("#error-personal-income-required").show(500);
+          $personal_income.css("border-color", error_color);
+				} else {
+					// if there is at least one character input into this field, clear the error message
+					$("#error-personal-income-required").hide(500);
+          $personal_income.css("border-color", no_error_color);
+				}
+			});
+
+			$personal_income.on('focusout', function() {
+				if ($personal_income.val().length == 0) {
+					// if the personal income field is blank, throw up an error message that this field is required 
+					$("#error-personal-income-required").show(500);
+          $personal_income.css("border-color", error_color);
+				} else {
+					// Under this condition the user has filled in personal income, so get rid of all error messages
+					$("#error-personal-income-required").hide(500);
+			    $personal_income.css("border-color", no_error_color);
+				}
+			});
+
+			$income_variability.on('change', function() {
+				var income_variability_selected = $("input[name='IncomeVariability']:checked").val();
+				if (income_variability_selected != null) {
+					$("#error-income-variability-required").hide(500);
+          $income_variability.css("border-color", no_error_color);
+				} else {
+					$("#error-income-variability-required").show(500);
+          $income_variability.css("border-color", error_color);
+				}
+			});
+
+			$income_variability.on('focusout', function() {
+				var income_variability_selected = $("input[name='IncomeVariability']:checked").val();
+				if (income_variability_selected != null) {
+					$("#error-income-variability-required").hide(500);
+			    $income_variability.css("border-color", no_error_color);
+				} else {
+					$("#error-income-variability-required").show(500);
+			    $income_variability.css("border-color", error_color);
+				}
+			});
+
+			$household_income.on('input.True', function() {
+				if (this.value.length == 0) {
+					// Household Income was likely cleared out and deleted, so show the 'Field is required' error message
+					$("#error-household-income-required").show(500);
+          $household_income.css("border-color", error_color);
+				} else {
+					// if there is at least one character input into this field, clear the error message
+					$("#error-household-income-required").hide(500);
+          $household_income.css("border-color", no_error_color);
+				}
+			});
+
+			$household_income.on('focusout', function() {
+				if ($household_income.val().length == 0) {
+					// if the household income field is blank, throw up an error message that this field is required 
+					$("#error-household-income-required").show(500);
+          $household_income.css("border-color", error_color);
+				} else {
+					// Under this condition the user has filled in household income, so get rid of all error messages
+					$("#error-household-income-required").hide(500);
+			    $household_income.css("border-color", no_error_color);
+				}
+			});
+
+			$('#net_worth').on('change', function() {
+				if (this.value.length == 0) {
+					// Net worth was likely reset, so show the 'Field is required' error message
+					$("#error-net-worth-required").show(500);
+          $net_worth.css("border-color", error_color);
+				} else {
+					// if there is something selected in this field, clear the error message
+					$("#error-net-worth-required").hide(500);
+          $net_worth.css("border-color", no_error_color);
+				}
+			});
+
+			$net_worth.on('focusout', function() {
+				if ($net_worth.val().length == 0) {
+					// if the net worth field is blank, throw up an error message that this field is required 
+					$("#error-net-worth-required").show(500);
+          $net_worth.css("border-color", error_color);
+				} else {
+					// Under this condition the user has filled in net worth, so get rid of all error messages
+					$("#error-net-worth-required").hide(500);
+			    $net_worth.css("border-color", no_error_color);
+				}
+			});
+
+			$bankruptcy.on('change', function() {
+				var bankruptcy_selected = $("input[name='Bankruptcy']:checked").val();
+				if (bankruptcy_selected != null) {
+					$("#error-bankruptcy-required").hide(500);
+          $bankruptcy.css("border-color", no_error_color);
+				} else {
+					$("#error-bankruptcy-required").show(500);
+          $bankruptcy.css("border-color", error_color);
+				}
+			});
+
+			$bankruptcy.on('focusout', function() {
+				var bankruptcy_selected = $("input[name='Bankruptcy']:checked").val();
+				if (bankruptcy_selected != null) {
+					$("#error-bankruptcy-required").hide(500);
+			    $bankruptcy.css("border-color", no_error_color);
+				} else {
+					$("#error-bankruptcy-required").show(500);
+			    $bankruptcy.css("border-color", error_color);
+				}
+			});
+
+			$other_apps_declined.on('change', function() {
+				var other_insurance_decline_selected = $("input[name='OtherLifeInsuranceDecline']:checked").val();
+				if (other_insurance_decline_selected != null) {
+					$("#error-apps-declined-required").hide(500);
+          $other_apps_declined.css("border-color", no_error_color);
+				} else {
+					$("#error-apps-declined-required").show(500);
+          $other_apps_declined.css("border-color", error_color);
+				}
+			});
+
+			$other_apps_declined.on('focusout', function() {
+				var	other_insurance_decline_selected = $("input[name='OtherLifeInsuranceDecline']:checked").val();
+				if (other_insurance_decline_selected != null) {
+					$("#error-apps-declined-required").hide(500);
+			    $other_apps_declined.css("border-color", no_error_color);
+				} else {
+					$("#error-apps-declined-required").show(500);
+			    $other_apps_declined.css("border-color", error_color);
+				}
+			});
+
+			$other_life_insurance.on('change', function() {
+				var other_insurance_selected = $("input[name='OtherLifeInsurance']:checked").val();
+				if (other_insurance_selected != null) {
+					if (other_insurance_selected == "Yes") {
+						if (!conditionals_for_other_insurance_satisfied) {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").show(500);
+					    $other_life_insurance.css("border-color", error_color);
+						} else if (conditionals_for_other_insurance_satisfied) {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").hide(500);
+					    $other_life_insurance.css("border-color", no_error_color);
+						}
+					} else if (other_insurance_selected == "No") {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").hide(500);
+					    $other_life_insurance.css("border-color", no_error_color);
+					}
+				} else {
+					$("#error-other-policies-all-fields-required").hide(500);
+					$("#error-other-policies-required").show(500);
+			    $other_life_insurance.css("border-color", error_color);
+				}
+			});
+
+		$other_life_insurance.on('focusout', function() {
+				var other_insurance_selected = $("input[name='OtherLifeInsurance']:checked").val();
+				if (other_insurance_selected != null) {
+					if (other_insurance_selected == "Yes") {
+						if (!conditionals_for_other_insurance_satisfied) {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").show(500);
+					    $other_life_insurance.css("border-color", error_color);
+						} else if (conditionals_for_other_insurance_satisfied) {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").hide(500);
+					    $other_life_insurance.css("border-color", no_error_color);
+						}
+					} else if (other_insurance_selected == "No") {
+							$("#error-other-policies-required").hide(500);
+							$("#error-other-policies-all-fields-required").hide(500);
+					    $other_life_insurance.css("border-color", no_error_color);
+					}
+				} else {
+					$("#error-other-policies-all-fields-required").hide(500);
+					$("#error-other-policies-required").show(500);
+			    $other_life_insurance.css("border-color", error_color);
+				}
+		});
+
+      // Check if the URL has any query parameters
+      if (window.location.search) {
+        // Function to get query parameters from the URL
+        function getQueryParameter(name) {
+          const urlParams = new URLSearchParams(window.location.search);
+          return urlParams.get(name);
+        }
+
+        // Retrieve the parameters
+        const firstName = getQueryParameter('first_name');
+        const lastName = getQueryParameter('last_name');
+        const homeAddress = getQueryParameter('home_address');
+        const addressLength = getQueryParameter('address_length');
+        const phoneNumber = getQueryParameter('phone_number');
+        const emailAddress = getQueryParameter('email_address');
+        const sourceCategory = getQueryParameter('source_category');
+
+        const employer = getQueryParameter('employer');
+        const occupation = getQueryParameter('occupation');
+        const yearsEmployed = getQueryParameter('years_employed');
+        const employerAddress = getQueryParameter('employer_address');
+        const personalIncome = getQueryParameter('personal_income');
+        const incomeVariability = getQueryParameter('income_variability');
+				
+        const householdIncome = getQueryParameter('household_income');
+        const netWorth = getQueryParameter('net_worth');
+        const bankruptcy = getQueryParameter('bankruptcy');
+        const otherInsuranceDeclined = getQueryParameter('other_insurance_declined');
+        const otherInsurancePolicies = getQueryParameter('other_insurance_policies');
+        const otherInsurancePoliciesDetails = getQueryParameter('other_insurance_policies_details');
+
+        // Populate the fields on the page
+        if (firstName) {
+          $('#app_first_name')
+            .val(decodeURIComponent(firstName))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (lastName) {
+          $('#app_last_name')
+            .val(decodeURIComponent(lastName))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (homeAddress) {
+          $('#app_home_address')
+            .val(decodeURIComponent(homeAddress))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (phoneNumber) {
+          $('#app_phone_number')
+            .val(decodeURIComponent(phoneNumber))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (emailAddress) {
+          $('#app_email_address')
+            .val(decodeURIComponent(emailAddress))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+
+        if (employer) {
+          $('#floating-employer-label').addClass('float'); // Float the label
+          $('#employer')
+            .val(decodeURIComponent(employer))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (occupation) {
+          $('#floating-occupation-label').addClass('float'); // Float the label
+          $('#occupation')
+            .val(decodeURIComponent(occupation))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+
+        if (yearsEmployed) {
+          $('#floating-years-employed-label').addClass('float'); // Float the label
+          $('#years_employed')
+            .val(decodeURIComponent(yearsEmployed))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+
+        if (employerAddress) {
+          $('#floating-employer-address-label').addClass('float'); // Float the label
+          $('#employer_address')
+            .val(decodeURIComponent(employerAddress))
+            .trigger('input'); // Assign the value and trigger input event
+
+          // Call the parse address function with the employer address
+          parseAddress(decodeURIComponent(employerAddress), function() {
+            submitButtonCheck();
+          });
+				}
+
+        if (personalIncome) {
+          $('#floating-personal-income-label').addClass('float'); // Float the label
+          $('#personal_income')
+            .val(decodeURIComponent(personalIncome))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (incomeVariability) {
+					if (incomeVariability == 'Stable') {
+					  $("input[name='IncomeVariability'][value='Fluctuates']").prop("checked", false);
+						$("input[name='IncomeVariability'][value='Fluctuates']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='IncomeVariability'][value='Stable']").prop("checked", true);
+						$("input[name='IncomeVariability'][value='Stable']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+					if (incomeVariability == 'Fluctuates') {
+					  $("input[name='IncomeVariability'][value='Stable']").prop("checked", false);
+						$("input[name='IncomeVariability'][value='Stable']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='IncomeVariability'][value='Fluctuates']").prop("checked", true);
+						$("input[name='IncomeVariability'][value='Fluctuates']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+        }
+        if (householdIncome) {
+          $('#floating-household-income-label').addClass('float'); // Float the label
+          $('#household_income')
+            .val(decodeURIComponent(householdIncome))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (netWorth) {
+          $('#floating-net-worth-label').addClass('float'); // Float the label
+          $('#net_worth')
+            .val(decodeURIComponent(netWorth))
+            .trigger('input'); // Assign the value and trigger input event
+        }
+        if (bankruptcy) {
+					if (bankruptcy == 'Yes') {
+					  $("input[name='Bankruptcy'][value='No']").prop("checked", false);
+						$("input[name='Bankruptcy'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='Bankruptcy'][value='Yes']").prop("checked", true);
+						$("input[name='Bankruptcy'][value='Yes']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+					if (bankruptcy == 'No') {
+					  $("input[name='Bankruptcy'][value='Yes']").prop("checked", false);
+						$("input[name='Bankruptcy'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='Bankruptcy'][value='No']").prop("checked", true);
+						$("input[name='Bankruptcy'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+        }
+        if (otherInsuranceDeclined) {
+					if (otherInsuranceDeclined == 'Yes') {
+					  $("input[name='OtherLifeInsuranceDecline'][value='No']").prop("checked", false);
+						$("input[name='OtherLifeInsuranceDecline'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='OtherLifeInsuranceDecline'][value='Yes']").prop("checked", true);
+						$("input[name='OtherLifeInsuranceDecline'][value='Yes']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+					if (otherInsuranceDeclined == 'No') {
+					  $("input[name='OtherLifeInsuranceDecline'][value='Yes']").prop("checked", false);
+						$("input[name='OtherLifeInsuranceDecline'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='OtherLifeInsuranceDecline'][value='No']").prop("checked", true);
+						$("input[name='OtherLifeInsuranceDecline'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+        }
+        if (otherInsurancePolicies) {
+					if (otherInsurancePolicies == 'Yes') {
+					  $("input[name='OtherLifeInsurance'][value='No']").prop("checked", false);
+						$("input[name='OtherLifeInsurance'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='OtherLifeInsurance'][value='Yes']").prop("checked", true);
+						$("input[name='OtherLifeInsurance'][value='Yes']").prev('.w-radio-input').addClass('w--redirected-checked');
+					}
+					if (otherInsurancePolicies == 'No') {
+					  $("input[name='OtherLifeInsurance'][value='Yes']").prop("checked", false);
+						$("input[name='OtherLifeInsurance'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+					  $("input[name='OtherLifeInsurance'][value='No']").prop("checked", true);
+						$("input[name='OtherLifeInsurance'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+						other_policy_ct = 0;
+						conditionals_for_other_insurance_satisfied = true;
+					}
+        }
+
+				// Split the Other Policies Details string into key-value pairs
+				const pairs = otherInsurancePoliciesDetails.split(";");
+
+				// Parse into a dictionary
+				const parsedData = {};
+				pairs.forEach(pair => {
+				    if (pair.includes("=")) {
+				        const [key, value] = pair.split("=");
+								if (value) {
+								    const match = key.match(/^policy-(\d+)-replacement-flag$/);
+								    if (match) {
+								        const policyNumber = parseInt(match[1],10); // Extract the number from the key and ensure it is an integer
+												if (!isNaN(policyNumber)) { // Double-check it's a valid number
+														$('#additional_policy_'+policyNumber).show(500);
+														$(".add_next_policy").show(500);
+														other_policy_ct = policyNumber;
+										    } else {
+										        console.error("Invalid policy number extracted from key:", match[1]);
+										    }
+
+												switch (value) {
+													case "Yes": 
+													  $("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='Yes']").prop("checked", true);
+														$("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').addClass('w--redirected-checked');
+													  $("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='No']").prop("checked", false);
+														$("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='No']").prev('.w-radio-input').removeClass('w--redirected-checked');
+														break;
+													case "No":
+													  $("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='No']").prop("checked", true);
+														$("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='No']").prev('.w-radio-input').addClass('w--redirected-checked');
+													  $("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='Yes']").prop("checked", false);
+														$("input[name='Policy-"+policyNumber+"-Replacement-Flag'][value='Yes']").prev('.w-radio-input').removeClass('w--redirected-checked');
+														break;
+													default: break;
+												}
+
+								    } else {
+												$('#'+key).val(value);
+												$('#'+key+'_label').addClass('float');
+										}
+								}
+				    }
+				});
+
+        submitButtonCheck();
+      } else {
+        console.log('No query parameters found in the URL.');
+      }
+
+      // Function to parse the address
+      function parseAddress(addressString, callback) {
+        const geocoder = new google.maps.Geocoder();
+
+        geocoder.geocode({ address: addressString }, function(results, status) {
+          if (status === 'OK' && results[0]) {
+            const place = results[0];
+
+            formattedAddress = place.formatted_address;
+            storage.setItem('employer_formatted_address', formattedAddress);
+            
+            const components = place.address_components;
+
+            let street_number = '',
+                street = '',
+                address_line1 = '',
+                address_line2 = '',
+                city = '',
+                state = '',
+                postalCode = '';
+
+            for (let component of components) {
+              if (component.types.includes('street_number')) {
+                street_number = component.long_name;
+              }
+              if (component.types.includes('route')) {
+                street = component.long_name;
+              }
+              if (component.types.includes('subpremise')) {
+                address_line2 = component.long_name;
+              }
+              if (component.types.includes('locality')) {
+                city = component.long_name;
+              }
+              if (component.types.includes('administrative_area_level_1')) {
+                state = component.short_name;
+              }
+              if (component.types.includes('postal_code')) {
+                postalCode = component.long_name;
+              }
+            }
+
+            if (street_number) {
+              $('#employer_street_number').val(street_number);
+              storage.setItem('employer_street_number', street_number);
+            }
+            if (street) {
+              $('#employer_street').val(street);
+              storage.setItem('employer_street', street);
+            }
+            if (street_number && street) {
+              address_line1 = street_number + ' ' + street;
+              $('#employer_address_line1').val(address_line1);
+              storage.setItem('employer_address_line1', address_line1);
+            }
+            if (address_line2) {
+              $('#employer_address_line2').val(address_line2);
+              storage.setItem('employer_address_line2', address_line2);
+            }
+            if (city) {
+              $('#employer_city').val(city);
+              storage.setItem('employer_city', city);
+            }
+            if (state) {
+              $('#employer_state').val(state);
+              storage.setItem('employer_state', state);
+            }
+            if (postalCode) {
+              $('#employer_zip').val(postalCode);
+              storage.setItem('employer_zip', postalCode);
+            }
+            if (typeof callback === "function") {
+              callback();
+            }            
+          } else {
+            console.error('Geocode failed: ' + status);
+          }
+        });
+      }
+		});
+	})(jQuery, window, document);
+})
