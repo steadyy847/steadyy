@@ -1697,6 +1697,10 @@ $('#childcare-input').keypress(function(event) {
 				formatted_total_insurance_need = formatter.format(total_insurance_need).toString(),
 				result_total_need = formatted_total_insurance_need.slice(0, formatted_total_insurance_need.length - 3);
 
+		console.log("total_insurance_need = "+total_insurance_need);
+		console.log("formatted_total_insurance_need = "+formatted_total_insurance_need);
+		console.log("result_total_need = "+result_total_need);
+
     storage.setItem('total_insurance_need', Math.ceil((total_insurance_need) / 100000) * 100000);
     storage.setItem('coverage_recommendation_method', 'Needs');
 		$('#result_total_need').text(result_total_need);
